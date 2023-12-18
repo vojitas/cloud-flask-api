@@ -1,24 +1,30 @@
-name: Push-to-EC2
+name: Deploy
 
 on:
   push:
-    branches:
-      - master
+    branches: [ dev ]
 
 jobs:
-  deploy:
-    name: Deploy to EC2 on master branch push
+  Deploy:
+    name: Deploy to EC2
     runs-on: ubuntu-latest
-
+    
     steps:
-      
-      - name: Checkout the files
-        uses: actions/checkout@v2
-
-      - name: Deploy to Server 1
-        uses: easingthemes/ssh-deploy@main
+      - uses: actions/checkout@v2 
+      - name: Build & Deploy
         env:
-          SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
-          REMOTE_HOST: ${{ secrets.HOST_DNS }}
-          REMOTE_USER: ${{ secrets.USERNAME }}
-          TARGET: ${{ secrets.TARGET_DIR }}
+            PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+            HOSTNAME: ${{secrets.SSH_HOST}}
+            USER_NAME: ${{secrets.USER_NAME}}
+      
+        run: |
+          echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
+          ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} '
+
+              cd flask-api &&
+              git checkout master &&
+              git fetch --all &&
+              git reset --hard origin/master &&
+              git pull origin master &&
+              sudo docker-compose up --build --force-recreate -d
+              '
