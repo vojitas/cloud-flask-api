@@ -16,7 +16,8 @@ class User(db.Model):
     def json(self):
         return {'id': self.id,'username': self.username, 'email': self.email}
 
-db.create_all()
+with app.app_context():
+    db.create_all()
 
 #create a test route
 @app.route('/test', methods=['GET'])

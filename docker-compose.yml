@@ -6,20 +6,7 @@ services:
     ports:
       - "5000:5000"
     environment:
-      - DB_URL=postgresql://postgres:postgres@flask_db:5432/postgres
-    depends_on:
-      - flask_db
-  flask_db:
-    container_name: flask_db
-    image: postgres:12
-    ports:
-      - "5432:5432"
-    environment:
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_USER=postgres
-      - POSTGRES_DB=postgres
-    volumes:
-      - pgdata:/var/lib/postgresql/data
+      - DB_URL=postgresql://postgres:wojtek123@database.cybbkocdthrb.eu-central-1.rds.amazonaws.com:5432/postgres
   nginx: 
     image: nginx:latest
     volumes:
@@ -28,6 +15,3 @@ services:
       - flask_app
     ports:
       - "80:80"
-
-volumes:
-  pgdata: {}
