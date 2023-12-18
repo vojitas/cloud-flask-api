@@ -22,7 +22,7 @@ with app.app_context():
 #create a test route
 @app.route('/test', methods=['GET'])
 def test():
-  return make_response(jsonify({'message': 'test route'}), 200)
+  return make_response(jsonify({'message': 'test route ...'}), 200)
 
 
 # create a user
