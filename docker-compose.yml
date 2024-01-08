@@ -6,7 +6,7 @@ services:
     ports:
       - "5000:5000"
     environment:
-      - DB_URL=postgresql://postgres:wojtek123@database.cybbkocdthrb.eu-central-1.rds.amazonaws.com:5432/postgres
+      - DB_URL=postgresql://postgres:postgres@terraform-20240108021541796900000001.cybbkocdthrb.eu-central-1.rds.amazonaws.com:5432/postgres
   nginx: 
     image: nginx:latest
     volumes:
