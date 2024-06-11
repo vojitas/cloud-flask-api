@@ -1,4 +1,6 @@
-from flask import Flask, request, jsonify, make_response
+from flask import Flask, request, jsonify, make_response, Response
+from prometheus_client import Counter, Gauge, start_http_server, generate_latest
+import random
 from flask_sqlalchemy import SQLAlchemy
 from os import environ
 
@@ -18,6 +20,19 @@ class User(db.Model):
 
 with app.app_context():
     db.create_all()
+
+CONTENT_TYPE_LATEST = str('text/plain; version=0.0.4; charset=utf-8')
+
+number_of_requests = Counter(
+    'number_of_requests',
+    'The number of requests, its a counter so the value can increase or reset to zero.'
+)
+
+number_of_errors = Counter(
+    'number_of_errors',
+    'The number of errors, its a counter so the value can increase or reset to zero.'
+)
+
 
 #create a test route
 @app.route('/test', methods=['GET'])
@@ -44,6 +59,7 @@ def create_user():
         return make_response(jsonify({'message': 'user created'}), 201)
     except Exception as e:
         db.session.rollback()
+        number_of_errors.inc()
         return make_response(jsonify({'message': f'error creating user: {str(e)}'}), 500)
     finally:
         db.session.close()
@@ -55,6 +71,7 @@ def get_users():
     users = User.query.all()
     return make_response(jsonify([user.json() for user in users]), 200)
   except:
+    number_of_errors.inc()
     return make_response(jsonify({'message': 'error getting users'}), 500)
 
 # get a user by id
@@ -66,6 +83,7 @@ def get_user(id):
       return make_response(jsonify({'user': user.json()}), 200)
     return make_response(jsonify({'message': 'user not found'}), 404)
   except:
+    number_of_errors.inc()
     return make_response(jsonify({'message': 'error getting user'}), 500)
 
 # update a user
@@ -81,6 +99,7 @@ def update_user(id):
       return make_response(jsonify({'message': 'user updated'}), 200)
     return make_response(jsonify({'message': 'user not found'}), 404)
   except:
+    number_of_errors.inc()
     return make_response(jsonify({'message': 'error updating user'}), 500)
 
 # delete a user
@@ -94,8 +113,14 @@ def delete_user(id):
       return make_response(jsonify({'message': 'user deleted'}), 200)
     return make_response(jsonify({'message': 'user not found'}), 404)
   except:
+    number_of_errors.inc()
     return make_response(jsonify({'message': 'error deleting user'}), 500)
-
+  
+# get metrics
+@app.route('/metrics', methods=['GET'])
+def get_data():
+    number_of_requests.inc()
+    return Response(generate_latest(), mimetype=CONTENT_TYPE_LATEST)
     
 if __name__ == "__main__":
     app.run(host='0.0.0.0', debug=True)
