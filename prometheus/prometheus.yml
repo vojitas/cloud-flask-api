@@ -1,0 +1,7 @@
+global:
+  scrape_interval: 10s
+scrape_configs:
+ - job_name: flask-crud-api
+   static_configs:
+    - targets:
+       - http://ec2-63-176-0-187.eu-central-1.compute.amazonaws.com:80
