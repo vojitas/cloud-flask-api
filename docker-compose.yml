@@ -7,8 +7,6 @@ services:
       - "5000:5000"
     environment:
       - DB_URL=postgresql://postgres:postgres@iac-postgres.cybbkocdthrb.eu-central-1.rds.amazonaws.com:5432/postgres
-    networks:
-      - monitoring
   nginx: 
     image: nginx:latest
     volumes:
@@ -26,17 +24,11 @@ services:
       - 9090
     ports:
       - 9090:9090
-    networks:
-      - monitoring
     depends_on:
       - flask_app
   grafana:
     image: grafana/grafana:latest
     ports:
       - 3000:3000
-    networks:
-      - monitoring
     depends_on:
       - prometheus
-networks:
-  monitoring:
