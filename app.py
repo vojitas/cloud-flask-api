@@ -1,6 +1,5 @@
 from flask import Flask, request, jsonify, make_response, Response
-from prometheus_client import Counter, Gauge, start_http_server, generate_latest
-import random
+from prometheus_client import Counter, generate_latest
 from flask_sqlalchemy import SQLAlchemy
 from os import environ
 
