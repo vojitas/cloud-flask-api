@@ -26,6 +26,8 @@ services:
       - 9090
     ports:
       - 9090:9090
+    networks:
+      - monitoring
     depends_on:
       - flask_app
   grafana:
