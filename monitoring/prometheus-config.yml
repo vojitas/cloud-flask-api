@@ -9,7 +9,7 @@ scrape_configs:
     static_configs:
     - targets: ["prometheus:9090"]
 
-  - job_name: "middleware"
+  - job_name: "application"
     scrape_interval: 5s
     static_configs:
     - targets: ["flask_app:80"]
